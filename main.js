@@ -15,7 +15,7 @@ app.use(express.json());
 
 // WebSocket sunucusu başlat
 const server = app.listen(PORT, () => {
-    console.log(`Server ${PORT} portunda çaalışıyor.`);
+    console.log(`Server ${PORT} portunda çalışıyor.`);
 });
 const wss = new WebSocket.Server({ server }); // HTTP sunucusunu WebSocket ile bağla
 
@@ -50,8 +50,4 @@ app.post('/api/command', (req, res) => {
     });
 
     res.status(200).send('Command sent to WebSocket clients.');
-});
-// Sunucuyu başlat
-app.listen(PORT, () => {
-    console.log(`Server ${PORT} portunda çalışıyor.`);
 });
