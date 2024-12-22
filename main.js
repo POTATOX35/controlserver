@@ -1,16 +1,19 @@
-const bodyParser = require('body-parser');
 const express = require('express');
-const cors = require('cors'); 
+const cors = require('cors');
 const PORT = 3000;
 const app = express();
+
+// Middleware'ler
 app.use(cors({
     origin: '*',  // Geliştirme ortamında her yerden gelen istekleri kabul edebiliriz
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
+app.use(express.json()); // JSON verilerini işlemek için gerekli
 
+// POST rotası
 app.post('/api/command', (req, res) => {
-    const command = req.body.command;
+    const command = req.body.command; // req.body artık undefined olmaz
     console.log(`Received command: ${command}`);
 
     // Gelen komut üzerinde işlem yap
@@ -22,6 +25,7 @@ app.post('/api/command', (req, res) => {
     }
 });
 
+// Sunucuyu başlat
 app.listen(PORT, () => {
     console.log(`Server ${PORT} portunda çalışıyor.`);
 });
