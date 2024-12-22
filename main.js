@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const WebSocket = require('ws'); // WebSocket için kütüphane
-const PORT = process.env.PORT || 3000; // Render ortamında PORT'u kullan
+const WebSocket = require('ws');
+const PORT = 3000;
 
 const app = express();
 
