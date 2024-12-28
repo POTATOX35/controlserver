@@ -29,7 +29,7 @@
 
         // Kamera verisini belirli aralıklarla al
         function fetchFrame() {
-            fetch('http://localhost:3001/api/frame')  // Sunucudan kamera verisini al
+            fetch('/api/frame')  // Sunucudan kamera verisini al
                 .then(response => response.json())
                 .then(data => {
                     if (data.frame) {
