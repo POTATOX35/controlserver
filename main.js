@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const WebSocket = require('ws');
+const path = require('path'); // HTML dosyasını serve etmek için
 const PORT = 3001;
 
 const app = express();
@@ -12,6 +13,11 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
+
+// Kamera görüntüsünü gösterecek HTML sayfasını serve et
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));  // 'index.html' dosyasının yolu
+});
 
 // WebSocket sunucusu başlat
 const server = app.listen(PORT, () => {
