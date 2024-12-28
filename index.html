@@ -10,29 +10,13 @@
     <img id="video-stream" src="" width="640" height="480" />
 
     <script>
-        const socket = new WebSocket("ws://localhost:3001");  // WebSocket server adresi (yerel)
+        // WebSocket bağlantısı kur
+        const socket = new WebSocket("wss://localhost:3001");
 
         socket.onopen = () => {
             console.log("WebSocket bağlantısı kuruldu.");
-            // Server'a webcam akışını başlatma komutunu gönder
+            // WebSocket üzerinden server'a webcam'i başlatma komutunu gönder
             socket.send(JSON.stringify({ command: "start_webcam" }));
-        };
-
-        socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.command === 'receive_frame') {
-                // Base64 formatındaki görüntü verisini almak
-                const frameData = data.frame;
-                // Görüntüyü bir Blob'a dönüştürüp img etiketi ile göster
-                const byteCharacters = atob(frameData);
-                const byteArray = new Uint8Array(byteCharacters.length);
-                for (let i = 0; i < byteCharacters.length; i++) {
-                    byteArray[i] = byteCharacters.charCodeAt(i);
-                }
-                const blob = new Blob([byteArray], { type: 'image/jpeg' });
-                const url = URL.createObjectURL(blob);
-                document.getElementById('video-stream').src = url;
-            }
         };
 
         socket.onerror = (error) => {
@@ -42,6 +26,29 @@
         socket.onclose = () => {
             console.log("WebSocket bağlantısı kapatıldı.");
         };
+
+        // Kamera verisini belirli aralıklarla al
+        function fetchFrame() {
+            fetch('https://localhost:3001/api/frame')  // Sunucudan kamera verisini al
+                .then(response => response.json())
+                .then(data => {
+                    if (data.frame) {
+                        const frameData = data.frame;
+                        const byteCharacters = atob(frameData);
+                        const byteArray = new Uint8Array(byteCharacters.length);
+                        for (let i = 0; i < byteCharacters.length; i++) {
+                            byteArray[i] = byteCharacters.charCodeAt(i);
+                        }
+                        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+                        const url = URL.createObjectURL(blob);
+                        document.getElementById('video-stream').src = url;
+                    }
+                })
+                .catch(error => console.error('Kamera verisi alınırken hata oluştu:', error));
+        }
+
+        // Kamera verisini her 100ms'de bir al
+        setInterval(fetchFrame, 100);
     </script>
 </body>
 </html>
