@@ -42,7 +42,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));  // 'index.html' dosyasının yolu
 });
 app.post('/api/command', (req, res) => {
-    const command = req.body.command; // Gelen komut
+    const command = req.body; // Gelen komut
     console.log(`Received command: ${command}`);
 
     if (clients.length === 0) {
