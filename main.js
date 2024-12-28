@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const WebSocket = require('ws');
 const PORT = 3001;
+const path = require('path');
+
 
 const app = express();
 
@@ -36,6 +38,9 @@ wss.on('connection', (ws) => {
 });
 
 // POST rotası
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));  // 'index.html' dosyasının yolu
+});
 app.post('/api/command', (req, res) => {
     const command = req.body.command; // Gelen komut
     console.log(`Received command: ${command}`);
