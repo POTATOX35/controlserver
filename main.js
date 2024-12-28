@@ -2,8 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const WebSocket = require('ws');
 const path = require('path');
-const fs = require('fs');
-const https = require('https');
 const PORT = 3001;
 
 const app = express();
@@ -33,13 +31,12 @@ app.get('/api/frame', (req, res) => {
     }
 });
 
-// HTTPS server başlatmak için gerekli sertifikalar
-const server = https.createServer({
-    key: fs.readFileSync(path.join(__dirname, 'server.key')),
-    cert: fs.readFileSync(path.join(__dirname, 'server.cert'))
-}, app);
+// HTTP server başlat
+const server = app.listen(PORT, () => {
+    console.log(`Server ${PORT} portunda çalışıyor.`);
+});
 
-// WebSocket sunucusu başlat
+// WebSocket sunucusunu HTTP sunucusuna bağla
 const wss = new WebSocket.Server({ server });
 
 // WebSocket bağlantılarını tutacak bir dizi
@@ -61,7 +58,19 @@ wss.on('connection', (ws) => {
     });
 });
 
-// Server'ı başlat
-server.listen(PORT, () => {
-    console.log(`Server ${PORT} portunda çalışıyor.`);
+// POST rotası
+app.post('/api/command', (req, res) => {
+    const command = req.body.command; // Gelen komut
+    console.log(`Received command: ${command}`);
+
+    if (clients.length === 0) {
+        return res.status(500).send('No connected WebSocket clients.');
+    }
+
+    // WebSocket üzerinden tüm bağlı istemcilere komut gönder
+    clients.forEach(client => {
+        client.send(JSON.stringify({ command }));
+    });
+
+    res.status(200).send('Command sent to WebSocket clients.');
 });
