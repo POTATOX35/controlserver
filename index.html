@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Stream</title>
+</head>
+<body>
+    <h1>Webcam Stream</h1>
+    <img id="video-stream" src="" width="640" height="480" />
+
+    <script>
+        const socket = new WebSocket("ws://localhost:3001");  // WebSocket server adresi (yerel)
+
+        socket.onopen = () => {
+            console.log("WebSocket bağlantısı kuruldu.");
+            // Server'a webcam akışını başlatma komutunu gönder
+            socket.send(JSON.stringify({ command: "start_webcam" }));
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.command === 'receive_frame') {
+                // Base64 formatındaki görüntü verisini almak
+                const frameData = data.frame;
+                // Görüntüyü bir Blob'a dönüştürüp img etiketi ile göster
+                const byteCharacters = atob(frameData);
+                const byteArray = new Uint8Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteArray[i] = byteCharacters.charCodeAt(i);
+                }
+                const blob = new Blob([byteArray], { type: 'image/jpeg' });
+                const url = URL.createObjectURL(blob);
+                document.getElementById('video-stream').src = url;
+            }
+        };
+
+        socket.onerror = (error) => {
+            console.error("WebSocket hatası:", error);
+        };
+
+        socket.onclose = () => {
+            console.log("WebSocket bağlantısı kapatıldı.");
+        };
+    </script>
+</body>
+</html>

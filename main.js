@@ -33,6 +33,30 @@ wss.on('connection', (ws) => {
         console.log('Bir istemci bağlantıyı kapattı.');
         clients = clients.filter(client => client !== ws);
     });
+
+    // Gelen mesajları dinle
+    ws.on('message', (message) => {
+        try {
+            const data = JSON.parse(message);
+
+            if (data.command === 'send_frame' && data.frame) {
+                // Kamera verisini al
+                const frameData = data.frame;
+                
+                // Tüm bağlı istemcilere bu veriyi gönder
+                clients.forEach(client => {
+                    if (client !== ws) {  // Gönderen istemciye tekrar gönderme
+                        client.send(JSON.stringify({
+                            command: 'receive_frame',
+                            frame: frameData
+                        }));
+                    }
+                });
+            }
+        } catch (e) {
+            console.error('Mesaj işlenemedi: ', e);
+        }
+    });
 });
 
 // POST rotası
