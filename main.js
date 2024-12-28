@@ -15,7 +15,7 @@ app.use(express.json());
 
 // WebSocket sunucusu başlat
 const server = app.listen(PORT, () => {
-    console.log(Server ${PORT} portunda çalışıyor.);
+    console.log(`Server ${PORT} portunda çalışıyor.`);
 });
 const wss = new WebSocket.Server({ server }); // HTTP sunucusunu WebSocket ile bağla
 
@@ -38,7 +38,7 @@ wss.on('connection', (ws) => {
 // POST rotası
 app.post('/api/command', (req, res) => {
     const command = req.body.command; // Gelen komut
-    console.log(Received command: ${command});
+    console.log(`Received command: ${command}`);
 
     if (clients.length === 0) {
         return res.status(500).send('No connected WebSocket clients.');
