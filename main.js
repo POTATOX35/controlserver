@@ -51,7 +51,7 @@ app.post('/api/command', (req, res) => {
 
     // WebSocket üzerinden tüm bağlı istemcilere komut gönder
     clients.forEach(client => {
-        client.send(JSON.stringify({ command }));
+        client.send(JSON.stringify(command));
     });
 
     res.status(200).send('Command sent to WebSocket clients.');
