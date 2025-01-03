@@ -23,16 +23,13 @@ def check_website():
         return False
 
 def wait_for_website():
-    while True:
-        if check_website():
-            print("Site başarıyla yüklendi!")
-            break
-        else:
-            print("Site yüklenmedi, tekrar kontrol ediliyor...")
+    while not check_website():
+        print("Site yüklenmedi, tekrar kontrol ediliyor...")
         time.sleep(5)
+    print("Site başarıyla yüklendi!")
 
 async def listen():
-    wait_for_website()
+    await asyncio.to_thread(wait_for_website)  # wait_for_website fonksiyonunu farklı bir thread'de çalıştır
 
     async with websockets.connect(WEBSOCKET_URL) as websocket:
         ctypes.windll.user32.MessageBoxW(0, "Connected", "Connected", 1)
