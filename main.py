@@ -29,6 +29,7 @@ def wait_for_website():
     print("Site başarıyla yüklendi!")
 
 async def listen():
+    print('ohom')
     await asyncio.to_thread(wait_for_website)  # wait_for_website fonksiyonunu farklı bir thread'de çalıştır
 
     async with websockets.connect(WEBSOCKET_URL) as websocket:
