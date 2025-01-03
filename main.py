@@ -34,7 +34,7 @@ async def listen():
 
     async with websockets.connect(WEBSOCKET_URL) as websocket:
         ctypes.windll.user32.MessageBoxW(0, "Connected", "Connected", 1)
-
+        print('connected')
         while True:
             try:
                 message = await websocket.recv()
