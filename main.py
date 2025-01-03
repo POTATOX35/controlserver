@@ -25,7 +25,7 @@ def check_website():
 def wait_for_website():
     while not check_website():
         print("Site yüklenmedi, tekrar kontrol ediliyor...")
-        time.sleep(5)
+        time.sleep(1)
     print("Site başarıyla yüklendi!")
 
 async def listen():
